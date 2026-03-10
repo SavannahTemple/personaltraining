@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stone Rose Fitness | Savannah Temple</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS Variables for Frank Frazetta Color Palette */
+        :root {
+            --frazetta-black: #0b0706;
+            --frazetta-shadow: #1a0f0d;
+            --frazetta-blood: #6b1509;
+            --frazetta-crimson: #a62b14;
+            --frazetta-orange: #d95a2b;
+            --frazetta-ochre: #d9a05b;
+            --frazetta-bone: #e6d5c3;
+        }
+
+        /* Reset & Base Setup */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100%;
+            min-height: 100%;
+            background-color: var(--frazetta-black);
+            color: var(--frazetta-bone);
+            font-family: 'Lora', serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            overscroll-behavior: none; /* Smooth mobile swiping */
+        }
+
+        /* Canvas Background */
+        #physics-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none; /* Let clicks pass through to content */
+            background: radial-gradient(circle at center, var(--frazetta-shadow) 0%, var(--frazetta-black) 100%);
+        }
+
+        /* Layout & Typography */
+        #content-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            pointer-events: auto;
+        }
+
+        .panel {
+            background: rgba(11, 7, 6, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid var(--frazetta-blood);
+            border-top: 2px solid var(--frazetta-crimson);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(107, 21, 9, 0.2);
+            padding: 40px;
+            margin-bottom: 40px;
+            border-radius: 4px;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: var(--frazetta-orange);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            text-shadow: 2px 2px 4px #000, 0 0 20px var(--frazetta-blood);
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: var(--frazetta-ochre);
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            border-bottom: 1px solid var(--frazetta-blood);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            color: var(--frazetta-crimson);
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--frazetta-ochre);
+            margin-bottom: 30px;
+        }
+
+        p { margin-bottom: 20px; font-size: 1.1rem; }
+        
+        strong { color: var(--frazetta-ochre); }
+
+        /* Links & Buttons */
+        .cta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, var(--frazetta-blood), var(--frazetta-shadow));
+            color: var(--frazetta-bone);
+            text-decoration: none;
+            padding: 15px 20px;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            font-size: 1rem;
+            border: 1px solid var(--frazetta-crimson);
+            border-radius: 3px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn:hover, .btn:active {
+            background: linear-gradient(145deg, var(--frazetta-crimson), var(--frazetta-blood));
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(217, 90, 43, 0.4);
+            color: #fff;
+        }
+
+        .contact-info {
+            margin-top: 30px;
+            font-size: 1.1rem;
+        }
+
+        .contact-info a {
+            color: var(--frazetta-orange);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .contact-info a:hover {
+            color: var(--frazetta-ochre);
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: rgba(230, 213, 195, 0.5);
+            border-top: 1px solid var(--frazetta-blood);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="physics-canvas"></canvas>
+
+    <div id="content-wrapper">
+        
+        <header class="panel">
+            <h1>Stone Rose Fitness</h1>
+            <h3>Savannah Temple &mdash; Personal Training and Coach</h3>
+            <p class="tagline">Forging raw strength and primordial power into a sculpted physique.</p>
+        </header>
+
+        <section class="panel">
+            <h2>About Savannah</h2>
+            <p>Guided by a foundation in scientific principles and a passion for human performance, Savannah Temple bridges the gap between raw potential and peak physical achievement.</p>
+            <p><strong>Qualifications:</strong> Holds a Bachelor of Science in Exercise Science from California State University, Fullerton.</p>
+        </section>
+
+        <section class="panel">
+            <h2>Training Services</h2>
+            <p><strong>Custom 1-on-1 Training</strong><br>
+            Typically charging by the hour, Savannah provides elite, hands-on coaching located at <em>Ultra Flex in Monrovia, California</em>. Sessions are heavily customized and scheduled at our mutual convenience.</p>
+            <p><strong>The Primal Benefit:</strong><br> 
+            Unlock your genetic potential with customized, science-backed training regimes designed to forge unyielding strength, annihilate weakness, and build endurance tailored to your body's unique capabilities.</p>
+        </section>
+
+        <section class="panel">
+            <h2>Begin Your Conquest</h2>
+            <p>Ready to sculpt your legacy? Secure your session or manage your coaching payments below.</p>
+            
+            <div class="cta-grid">
+                <a href="#" class="btn">Calendly</a>
+                <a href="#" class="btn">Zelle</a>
+                <a href="#" class="btn">Venmo</a>
+                <a href="#" class="btn">Stripe</a>
+            </div>
+
+            <div class="contact-info">
+                <p><strong>Email:</strong> <a href="mailto:savannah.temple@aol.com">savannah.temple@aol.com</a></p>
+                <p><strong>Portal:</strong> <a href="https://SavannahTemple.github.io/personaltraining">SavannahTemple.github.io/personaltraining</a></p>
+            </div>
+        </section>
+
+        <footer>
+            &copy; 2026 Stone Rose Fitness. All rights reserved.
+        </footer>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('physics-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let weights = [];
+        
+        // Interaction coordinates
+        let pointer = { x: -1000, y: -1000, isDown: false, vy: 0, lastY: 0 };
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // The "Heavy Lifting" Physics Class
+        class IronOrb {
+            constructor() {
+                this.radius = Math.random() * 20 + 15; // 15 to 35px
+                this.mass = this.radius * 0.15;
+                this.x = Math.random() * width;
+                this.y = height + this.radius; // Start offscreen bottom
+                this.vx = 0;
+                this.vy = 0;
+                
+                // Frazetta coloring
+                this.colorBase = Math.random() > 0.5 ? '#d95a2b' : '#6b1509';
+            }
+
+            update() {
+                // Fake math physics: Gravity
+                this.vy += 0.4 * this.mass; 
+                
+                // Drag (The "shooshy" feel) - slows down movement smoothly
+                this.vx *= 0.90;
+                this.vy *= 0.94;
+
+                // Lifting Interaction
+                if (pointer.isDown) {
+                    let dx = pointer.x - this.x;
+                    let dy = pointer.y - this.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    let influenceRadius = 250; // How close you need to be to lift them
+
+                    if (dist < influenceRadius) {
+                        // The pull gets stronger the closer you are, heavily weighted upwards
+                        let force = (influenceRadius - dist) / influenceRadius;
+                        
+                        // Pull towards pointer horizontally
+                        this.vx += (dx / dist) * force * 1.5;
+                        
+                        // Lift upwards (resists gravity)
+                        // If pointer is moving up fast, apply extra lift
+                        let liftForce = (dy / dist) * force * 3;
+                        if (pointer.vy < 0) {
+                            liftForce += pointer.vy * 0.15; // swipe up adds energy
+                        }
+                        this.vy += liftForce;
+                    }
+                }
+
+                // Apply velocities
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Floor Collision (Heavy Thud)
+                if (this.y > height - this.radius) {
+                    this.y = height - this.radius;
+                    this.vy *= -0.2; // Low bounce, heavy iron feel
+                    this.vx *= 0.8;  // Friction on the floor
+                }
+
+                // Wall Collision
+                if (this.x < this.radius) {
+                    this.x = this.radius;
+                    this.vx *= -0.5;
+                }
+                if (this.x > width - this.radius) {
+                    this.x = width - this.radius;
+                    this.vx *= -0.5;
+                }
+            }
+
+            draw() {
+                // Draw Frazetta-style glowing iron orbs
+                let grad = ctx.createRadialGradient(this.x, this.y, this.radius * 0.2, this.x, this.y, this.radius);
+                grad.addColorStop(0, '#d9a05b'); // bright center
+                grad.addColorStop(0.3, this.colorBase); // mid color
+                grad.addColorStop(0.8, '#1a0f0d'); // dark edge
+                grad.addColorStop(1, 'rgba(11, 7, 6, 0)'); // fade to black
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = grad;
+                ctx.fill();
+            }
+        }
+
+        // Initialize weights
+        let numWeights = Math.floor(window.innerWidth / 30); // scale amount based on screen
+        if(numWeights > 40) numWeights = 40;
+        for (let i = 0; i < numWeights; i++) {
+            weights.push(new IronOrb());
+        }
+
+        // Event Listeners for Interaction
+        // Passive: true ensures we don't block mobile scrolling
+        window.addEventListener('mousemove', (e) => {
+            pointer.x = e.clientX;
+            pointer.vy = e.clientY - pointer.lastY;
+            pointer.y = e.clientY;
+            pointer.lastY = e.clientY;
+            pointer.isDown = true; 
+        });
+
+        window.addEventListener('mouseout', () => pointer.isDown = false);
+
+        window.addEventListener('touchstart', (e) => {
+            pointer.x = e.touches[0].clientX;
+            pointer.y = e.touches[0].clientY;
+            pointer.lastY = pointer.y;
+            pointer.isDown = true;
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            pointer.x = e.touches[0].clientX;
+            pointer.vy = e.touches[0].clientY - pointer.lastY;
+            pointer.y = e.touches[0].clientY;
+            pointer.lastY = pointer.y;
+            pointer.isDown = true;
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            pointer.isDown = false;
+        });
+
+        // Animation Loop
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw and update weights
+            for (let i = 0; i < weights.length; i++) {
+                weights[i].update();
+                weights[i].draw();
+            }
+
+            // Decay pointer velocity
+            pointer.vy *= 0.9;
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
