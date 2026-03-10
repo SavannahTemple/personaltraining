@@ -7,18 +7,19 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* CSS Variables for Frank Frazetta Color Palette */
+        /* CSS Variables for Stone Rose Soft Palette */
         :root {
-            --frazetta-black: #0b0706;
-            --frazetta-shadow: #1a0f0d;
-            --frazetta-blood: #6b1509;
-            --frazetta-crimson: #a62b14;
-            --frazetta-orange: #d95a2b;
-            --frazetta-ochre: #d9a05b;
-            --frazetta-bone: #e6d5c3;
+            --stone-dark: #2c3e50; /* Deep slate */
+            --stone-mid: #7f8c8d; /* Soft gray */
+            --stone-light: #ecf0f1; /* Off-white background */
+            --rose-deep: #b07d83; /* Muted deep rose */
+            --rose-soft: #dfb3b8; /* Light petal pink */
+            --accent-gold: #c5a880; /* Subtle warm accent */
+            --text-main: #34495e;
+            --text-light: #ffffff;
         }
 
         /* Reset & Base Setup */
@@ -31,188 +32,238 @@
         body, html {
             width: 100%;
             min-height: 100%;
-            background-color: var(--frazetta-black);
-            color: var(--frazetta-bone);
-            font-family: 'Lora', serif;
-            line-height: 1.6;
+            background-color: var(--stone-light);
+            color: var(--text-main);
+            font-family: 'Lato', sans-serif;
+            font-weight: 300;
+            line-height: 1.8;
             overflow-x: hidden;
-            overscroll-behavior: none; /* Smooth mobile swiping */
+            overscroll-behavior: none;
         }
 
         /* Canvas Background */
-        #physics-canvas {
+        #ambient-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
             z-index: 0;
-            pointer-events: none; /* Let clicks pass through to content */
-            background: radial-gradient(circle at center, var(--frazetta-shadow) 0%, var(--frazetta-black) 100%);
+            pointer-events: none;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
         }
 
         /* Layout & Typography */
         #content-wrapper {
             position: relative;
             z-index: 1;
-            max-width: 800px;
+            max-width: 850px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 60px 20px;
             pointer-events: auto;
         }
 
         .panel {
-            background: rgba(11, 7, 6, 0.75);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid var(--frazetta-blood);
-            border-top: 2px solid var(--frazetta-crimson);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(107, 21, 9, 0.2);
-            padding: 40px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(223, 179, 184, 0.3);
+            border-top: 3px solid var(--rose-deep);
+            box-shadow: 0 15px 35px rgba(44, 62, 80, 0.05), 0 5px 15px rgba(0,0,0,0.03);
+            padding: 50px;
             margin-bottom: 40px;
-            border-radius: 4px;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(44, 62, 80, 0.08);
         }
 
         h1, h2, h3 {
-            font-family: 'Cinzel', serif;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--stone-dark);
         }
 
         h1 {
-            color: var(--frazetta-orange);
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            text-shadow: 2px 2px 4px #000, 0 0 20px var(--frazetta-blood);
-            line-height: 1.1;
-            margin-bottom: 10px;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            line-height: 1.2;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
         }
 
         h2 {
-            color: var(--frazetta-ochre);
-            font-size: clamp(1.5rem, 3vw, 2rem);
-            border-bottom: 1px solid var(--frazetta-blood);
-            padding-bottom: 10px;
+            font-size: clamp(1.8rem, 3vw, 2.2rem);
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 2px;
+            background-color: var(--rose-soft);
         }
 
         h3 {
-            color: var(--frazetta-crimson);
-            font-size: 1.2rem;
-            margin-bottom: 5px;
+            color: var(--rose-deep);
+            font-size: 1.3rem;
+            font-weight: 400;
+            font-style: italic;
+            margin-bottom: 20px;
         }
 
         .tagline {
-            font-size: 1.2rem;
-            font-style: italic;
-            color: var(--frazetta-ochre);
+            font-size: 1.25rem;
+            color: var(--stone-mid);
             margin-bottom: 30px;
+            font-weight: 400;
         }
 
         p { margin-bottom: 20px; font-size: 1.1rem; }
         
-        strong { color: var(--frazetta-ochre); }
+        strong { color: var(--stone-dark); font-weight: 700; }
 
-        /* Links & Buttons */
+        /* Links & Buttons - Social Engineering focus: clear, inviting CTAs */
+        .cta-container {
+            margin-top: 40px;
+            text-align: center;
+        }
+
         .cta-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
         }
 
         .btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(145deg, var(--frazetta-blood), var(--frazetta-shadow));
-            color: var(--frazetta-bone);
+            background-color: var(--rose-deep);
+            color: var(--text-light);
             text-decoration: none;
-            padding: 15px 20px;
-            font-family: 'Cinzel', serif;
-            font-weight: bold;
-            font-size: 1rem;
-            border: 1px solid var(--frazetta-crimson);
-            border-radius: 3px;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            text-align: center;
+            padding: 16px 24px;
+            font-family: 'Lato', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border-radius: 30px; /* Softer, pill-shaped buttons */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(176, 125, 131, 0.3);
+            letter-spacing: 0.5px;
         }
 
         .btn:hover, .btn:active {
-            background: linear-gradient(145deg, var(--frazetta-crimson), var(--frazetta-blood));
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 5px 15px rgba(217, 90, 43, 0.4);
-            color: #fff;
+            background-color: var(--stone-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(44, 62, 80, 0.3);
+            color: var(--text-light);
+        }
+
+        /* Highlight the primary action */
+        .btn-primary {
+            background-color: var(--stone-dark);
+            box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--rose-deep);
         }
 
         .contact-info {
-            margin-top: 30px;
-            font-size: 1.1rem;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            font-size: 1.05rem;
+            text-align: center;
         }
 
         .contact-info a {
-            color: var(--frazetta-orange);
+            color: var(--rose-deep);
             text-decoration: none;
+            font-weight: 700;
             transition: color 0.2s;
         }
 
         .contact-info a:hover {
-            color: var(--frazetta-ochre);
-            text-decoration: underline;
+            color: var(--stone-dark);
+        }
+
+        /* Trust Indicators / Social Proof section styling */
+        .trust-badge {
+            background: rgba(223, 179, 184, 0.15);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: var(--stone-dark);
+            border-left: 4px solid var(--rose-soft);
         }
 
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 30px 20px;
             font-size: 0.9rem;
-            color: rgba(230, 213, 195, 0.5);
-            border-top: 1px solid var(--frazetta-blood);
-            margin-top: 40px;
+            color: var(--stone-mid);
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <canvas id="physics-canvas"></canvas>
+    <canvas id="ambient-canvas"></canvas>
 
     <div id="content-wrapper">
         
         <header class="panel">
             <h1>Stone Rose Fitness</h1>
-            <h3>Savannah Temple &mdash; Personal Training and Coach</h3>
-            <p class="tagline">Forging raw strength and primordial power into a sculpted physique.</p>
+            <h3>Savannah Temple &mdash; Personal Trainer & Wellness Coach</h3>
+            <p class="tagline">Cultivating sustainable strength, fostering confidence, and designing a lifestyle that honors your body.</p>
         </header>
 
         <section class="panel">
-            <h2>About Savannah</h2>
-            <p>Guided by a foundation in scientific principles and a passion for human performance, Savannah Temple bridges the gap between raw potential and peak physical achievement.</p>
-            <p><strong>Qualifications:</strong> Holds a Bachelor of Science in Exercise Science from California State University, Fullerton.</p>
-        </section>
-
-        <section class="panel">
-            <h2>Training Services</h2>
-            <p><strong>Custom 1-on-1 Training</strong><br>
-            Typically charging by the hour, Savannah provides elite, hands-on coaching located at <em>Ultra Flex in Monrovia, California</em>. Sessions are heavily customized and scheduled at our mutual convenience.</p>
-            <p><strong>The Primal Benefit:</strong><br> 
-            Unlock your genetic potential with customized, science-backed training regimes designed to forge unyielding strength, annihilate weakness, and build endurance tailored to your body's unique capabilities.</p>
-        </section>
-
-        <section class="panel">
-            <h2>Begin Your Conquest</h2>
-            <p>Ready to sculpt your legacy? Secure your session or manage your coaching payments below.</p>
+            <h2>Meet Savannah</h2>
+            <p>I believe that true fitness isn't about punishment; it's about preparation. My approach bridges the gap between scientific kinesiology and compassionate coaching, helping you discover what your body is truly capable of in a supportive, judgment-free environment.</p>
             
-            <div class="cta-grid">
-                <a href="#" class="btn">Calendly</a>
-                <a href="#" class="btn">Zelle</a>
-                <a href="#" class="btn">Venmo</a>
-                <a href="#" class="btn">Stripe</a>
+            <div class="trust-badge">
+                <strong>Certified Expertise:</strong> B.S. in Exercise Science, California State University, Fullerton. Specializing in functional hypertrophy, mobility, and sustainable habit formation.
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Your Training Experience</h2>
+            <p><strong>Bespoke 1-on-1 Coaching</strong><br>
+            Every body is unique. We'll work closely together at the premier <em>Ultra Flex facility in Monrovia, California</em> to build a program that aligns with your specific goals, schedule, and biomechanics.</p>
+            
+            <p><strong>The Stone Rose Philosophy:</strong><br> 
+            We focus on progressive, science-backed routines that build resilient strength, improve daily energy levels, and create long-lasting, healthy relationships with movement.</p>
+        </section>
+
+        <section class="panel">
+            <h2>Take the First Step</h2>
+            <p>Ready to invest in yourself? Whether you're a complete beginner or looking to break through a plateau, I'm here to guide you. Let's schedule a brief consultation to see if we're a good fit.</p>
+            
+            <div class="cta-container">
+                <a href="#" class="btn btn-primary" style="max-width: 300px; margin: 0 auto 25px auto;">Schedule Your Free Consultation</a>
+                
+                <p style="font-size: 0.9rem; color: var(--stone-mid); margin-bottom: 15px;">For current clients:</p>
+                <div class="cta-grid">
+                    <a href="#" class="btn">Zelle</a>
+                    <a href="#" class="btn">Venmo</a>
+                    <a href="#" class="btn">Stripe</a>
+                </div>
             </div>
 
             <div class="contact-info">
-                <p><strong>Email:</strong> <a href="mailto:savannah.temple@aol.com">savannah.temple@aol.com</a></p>
-                <p><strong>Portal:</strong> <a href="https://SavannahTemple.github.io/personaltraining">SavannahTemple.github.io/personaltraining</a></p>
+                <p><strong>Direct Inquiries:</strong> <a href="mailto:savannah.temple@aol.com">savannah.temple@aol.com</a></p>
+                <p><strong>Client Portal:</strong> <a href="https://SavannahTemple.github.io/personaltraining">Access Your Dashboard</a></p>
             </div>
         </section>
 
@@ -223,14 +274,14 @@
     </div>
 
     <script>
-        const canvas = document.getElementById('physics-canvas');
+        const canvas = document.getElementById('ambient-canvas');
         const ctx = canvas.getContext('2d');
 
         let width, height;
-        let weights = [];
+        let particles = [];
         
         // Interaction coordinates
-        let pointer = { x: -1000, y: -1000, isDown: false, vy: 0, lastY: 0 };
+        let pointer = { x: -1000, y: -1000 };
 
         function resize() {
             width = canvas.width = window.innerWidth;
@@ -239,139 +290,72 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // The "Heavy Lifting" Physics Class
-        class IronOrb {
+        // Soft, ambient particles instead of heavy iron
+        class AmbientParticle {
             constructor() {
-                this.radius = Math.random() * 20 + 15; // 15 to 35px
-                this.mass = this.radius * 0.15;
+                this.radius = Math.random() * 4 + 2; 
                 this.x = Math.random() * width;
-                this.y = height + this.radius; // Start offscreen bottom
-                this.vx = 0;
-                this.vy = 0;
-                
-                // Frazetta coloring
-                this.colorBase = Math.random() > 0.5 ? '#d95a2b' : '#6b1509';
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = -Math.random() * 0.5 - 0.2; // Slowly drift upwards
+                this.baseAlpha = Math.random() * 0.5 + 0.1;
             }
 
             update() {
-                // Fake math physics: Gravity
-                this.vy += 0.4 * this.mass; 
-                
-                // Drag (The "shooshy" feel) - slows down movement smoothly
-                this.vx *= 0.90;
-                this.vy *= 0.94;
-
-                // Lifting Interaction
-                if (pointer.isDown) {
-                    let dx = pointer.x - this.x;
-                    let dy = pointer.y - this.y;
-                    let dist = Math.sqrt(dx * dx + dy * dy);
-                    let influenceRadius = 250; // How close you need to be to lift them
-
-                    if (dist < influenceRadius) {
-                        // The pull gets stronger the closer you are, heavily weighted upwards
-                        let force = (influenceRadius - dist) / influenceRadius;
-                        
-                        // Pull towards pointer horizontally
-                        this.vx += (dx / dist) * force * 1.5;
-                        
-                        // Lift upwards (resists gravity)
-                        // If pointer is moving up fast, apply extra lift
-                        let liftForce = (dy / dist) * force * 3;
-                        if (pointer.vy < 0) {
-                            liftForce += pointer.vy * 0.15; // swipe up adds energy
-                        }
-                        this.vy += liftForce;
-                    }
-                }
-
-                // Apply velocities
+                // Gentle floating
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Floor Collision (Heavy Thud)
-                if (this.y > height - this.radius) {
-                    this.y = height - this.radius;
-                    this.vy *= -0.2; // Low bounce, heavy iron feel
-                    this.vx *= 0.8;  // Friction on the floor
+                // Softly move away from cursor
+                let dx = pointer.x - this.x;
+                let dy = pointer.y - this.y;
+                let dist = Math.sqrt(dx * dx + dy * dy);
+                let influenceRadius = 150;
+
+                if (dist < influenceRadius) {
+                    let force = (influenceRadius - dist) / influenceRadius;
+                    this.vx -= (dx / dist) * force * 0.05;
+                    this.vy -= (dy / dist) * force * 0.05;
                 }
 
-                // Wall Collision
-                if (this.x < this.radius) {
-                    this.x = this.radius;
-                    this.vx *= -0.5;
-                }
-                if (this.x > width - this.radius) {
-                    this.x = width - this.radius;
-                    this.vx *= -0.5;
-                }
+                // Return to base velocity slowly
+                this.vx = this.vx * 0.98 + ((Math.random() - 0.5) * 0.1);
+                
+                // Wrap around edges softly
+                if (this.y < -50) this.y = height + 50;
+                if (this.x < -50) this.x = width + 50;
+                if (this.x > width + 50) this.x = -50;
             }
 
             draw() {
-                // Draw Frazetta-style glowing iron orbs
-                let grad = ctx.createRadialGradient(this.x, this.y, this.radius * 0.2, this.x, this.y, this.radius);
-                grad.addColorStop(0, '#d9a05b'); // bright center
-                grad.addColorStop(0.3, this.colorBase); // mid color
-                grad.addColorStop(0.8, '#1a0f0d'); // dark edge
-                grad.addColorStop(1, 'rgba(11, 7, 6, 0)'); // fade to black
-
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = grad;
+                ctx.fillStyle = `rgba(176, 125, 131, ${this.baseAlpha})`; // Soft rose color
                 ctx.fill();
             }
         }
 
-        // Initialize weights
-        let numWeights = Math.floor(window.innerWidth / 30); // scale amount based on screen
-        if(numWeights > 40) numWeights = 40;
-        for (let i = 0; i < numWeights; i++) {
-            weights.push(new IronOrb());
+        // Initialize fewer, softer particles
+        let numParticles = Math.floor(window.innerWidth / 20); 
+        if(numParticles > 60) numParticles = 60;
+        for (let i = 0; i < numParticles; i++) {
+            particles.push(new AmbientParticle());
         }
 
         // Event Listeners for Interaction
-        // Passive: true ensures we don't block mobile scrolling
         window.addEventListener('mousemove', (e) => {
             pointer.x = e.clientX;
-            pointer.vy = e.clientY - pointer.lastY;
             pointer.y = e.clientY;
-            pointer.lastY = e.clientY;
-            pointer.isDown = true; 
-        });
-
-        window.addEventListener('mouseout', () => pointer.isDown = false);
-
-        window.addEventListener('touchstart', (e) => {
-            pointer.x = e.touches[0].clientX;
-            pointer.y = e.touches[0].clientY;
-            pointer.lastY = pointer.y;
-            pointer.isDown = true;
-        }, { passive: true });
-
-        window.addEventListener('touchmove', (e) => {
-            pointer.x = e.touches[0].clientX;
-            pointer.vy = e.touches[0].clientY - pointer.lastY;
-            pointer.y = e.touches[0].clientY;
-            pointer.lastY = pointer.y;
-            pointer.isDown = true;
-        }, { passive: true });
-
-        window.addEventListener('touchend', () => {
-            pointer.isDown = false;
         });
 
         // Animation Loop
         function animate() {
             ctx.clearRect(0, 0, width, height);
 
-            // Draw and update weights
-            for (let i = 0; i < weights.length; i++) {
-                weights[i].update();
-                weights[i].draw();
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
             }
-
-            // Decay pointer velocity
-            pointer.vy *= 0.9;
 
             requestAnimationFrame(animate);
         }
